@@ -152,18 +152,84 @@
         // added iteration count to prevent statistically improbable chance that method runs forever
         while( key1 === key2 ){
           randomTwoKeys()
-          iterations++
-          if( iterations > 5){
-            iterations = 0
-            break;
-          }
+          // iterations++
+          // if( iterations > 5){
+          //   iterations = 0
+          //   break;
+          // }
         }
         return [key1, key2];
       }
 
+      function pieMaker(){
+      randomTwo = randomTwoKeys()
+      // console.log(randomTwo)
+      console.log("#holder")
+      var svg_pie = d3.select("#holder")
+        .append("svg")
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT)
+        .append("g")
+        .attr("transform", "translate(" + WIDTH / 2 + "," + HEIGHT / 2 + ")");
+
+      var radius = HEIGHT / 2 - 10 // add margin to prevent clipping
+
+      var pie = d3.pie()
+        .value(function (d) { return d.value; })
+      var pieData = pie(d3.entries(testData))
+
+      var pieDataTest = pie(d3.entries(testData))[1]
+      // console.log( pieDataTest)
+
+      var arcMaker = d3.arc()
+        .innerRadius(50)
+        .outerRadius(radius)
+      svg_pie
+        .selectAll('data')
+        .data(pieData)
+        .enter()
+        .append('path')
+        .attr('d', arcMaker)
+        .attr("fill", "white")
+        .attr("stroke", "black")
+        .style("stroke-width", "2px")
+
+      svg_pie
+        .selectAll('data')
+        .data(pieData)
+        .enter()
+        .append('circle')
+        .attr('r', function(d){
+          if(randomTwo.includes(d.data.key)){
+            return 5
+          }
+          else{
+            return 0
+          }
+        })
+        .attr("transform", function (d) { return "translate(" + arcMaker.centroid(d) + ")"; })
+        var ratio = 100
+        // find actual ratio between two points
+        // console.log( testData[randomTwo[0]] )
+        if( randomTwo[0] >= randomTwo[1]){
+          ratio = (testData[randomTwo[0]] / testData[randomTwo[1]]) * 100
+        }
+        else{
+          ratio =  (testData[randomTwo[1]] / testData[randomTwo[0]] ) * 100
+        }
+      }
+      vises = ["tree", "pie", "bar", "Tree", "pie","bar"]
+      pieMaker()
 </script>
 
 <body>
+  <div id="experiment">
+<div id="holder">
+</div>
+    <form id="form_submit">
+      <input type="submit" value="submit">
+    </form>
+  </div>
   <h1> Hunter Experiment </h1>
   <div id="tree">
   <script>
@@ -218,24 +284,6 @@
   <h1> Clay Experiment</h1>
   <div id="pie">
     <script>
-      iterations = 0
-      // function randomTwoKeys(){
-
-      //   letters = Object.keys(testData)
-      //   key1 = letters[Math.floor(Math.random() * letters.length)]
-      //   key2 = letters[Math.floor(Math.random() * letters.length)]
-      //   // if keys are equal, run again
-      //   // added iteration count to prevent statistically improbable chance that method runs forever
-      //   while( key1 === key2 ){
-      //     randomTwoKeys()
-      //     iterations++
-      //     if( iterations > 5){
-      //       iterations = 0
-      //       break;
-      //     }
-      //   }
-      //   return [key1, key2];
-      // }
       randomTwo = randomTwoKeys()
       // console.log(randomTwo)
       var svg_pie = d3.select("#pie")
@@ -337,8 +385,4 @@
   </div>
 
 </body>
-<form id="form_submit">
-  <input type="submit" value="submit">
-</form>
-
 </HTML>
